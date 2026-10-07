@@ -9,6 +9,7 @@ create table if not exists public.khedmti_workspaces (
 );
 alter table public.khedmti_workspaces enable row level security;
 revoke all on public.khedmti_workspaces from anon;
+revoke all on public.khedmti_workspaces from authenticated;
 grant select, insert, update, delete on public.khedmti_workspaces to authenticated;
 create policy "Read own workspace" on public.khedmti_workspaces for select to authenticated using ((select auth.uid()) = user_id);
 create policy "Create own workspace" on public.khedmti_workspaces for insert to authenticated with check ((select auth.uid()) = user_id);
