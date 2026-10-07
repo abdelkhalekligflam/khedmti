@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Khedmti
 
-## Getting Started
+Next.js artisan workspace, French/Arabic, responsive, with light/dark themes.
 
-First, run the development server:
+## Run
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## First version
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Create and edit clients.
+- Create and edit quotes and interventions; track statuses.
+- Convert accepted quotes to interventions, retaining amounts already paid.
+- Record additional payments, bounded by the remaining balance.
+- Print quotes using the browser's Save as PDF, or share quote text through WhatsApp.
+- Dashboard totals calculated from interventions only, so quotes do not double count revenue.
+- Export a JSON backup from Settings.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Records are stored in this browser's localStorage. This is a local MVP, with no authentication, cloud synchronization, subscription enforcement, or automated WhatsApp delivery. Do not clear browser storage without exporting a backup. There is currently no backup import interface.
 
-## Learn More
+Quotes have a single service/amount and do not calculate VAT. Review before commercial use. Cloud accounts and user-isolated Supabase persistence are the next integration stage.
 
-To learn more about Next.js, take a look at the following resources:
+## Validation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`npm run build` verifies the production build and TypeScript. Initial npm audit reports five high-severity development dependency findings in the ESLint/fast-glob/braces chain; the suggested forced fix downgrades the Next.js ESLint configuration and has not been applied.

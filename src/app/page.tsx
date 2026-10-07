@@ -1,69 +1,46 @@
-import Image from "next/image";
-
+"use client";
+import { useEffect, useState, type FormEvent } from "react";
+type Client = { id: string; name: string; phone: string; address: string };
+type Job = { id: string; client: string; title: string; date: string; status: string; amount: number; paid: number; kind: "quote" | "job" };
+type Data = { clients: Client[]; jobs: Job[]; company: string; phone: string };
+const initial: Data = { clients: [], jobs: [], company: "Mon entreprise", phone: "" };
+const words = { fr: { dashboard: "Vue d’ensemble", clients: "Clients", quotes: "Devis", jobs: "Interventions", payments: "Paiements", settings: "Paramètres", greeting: "Une activité bien organisée.", intro: "Moins d’administratif. Plus de temps pour votre métier.", add: "Ajouter", newQuote: "Nouveau devis", newJob: "Nouvelle intervention", newClient: "Nouveau client", revenue: "Total encaissé", pending: "À encaisser", active: "Interventions actives", save: "Enregistrer", cancel: "Annuler", name: "Nom complet", phone: "Téléphone", address: "Adresse", client: "Client", title: "Prestation / description", date: "Date", amount: "Montant (DH)", paid: "Déjà payé (DH)", search: "Rechercher…", empty: "Aucun élément pour le moment", start: "Ajoutez votre premier client, puis préparez un devis ou une intervention.", today: "Votre espace de travail", recent: "Dernières interventions", status: "Statut", total: "Total", rest: "Reste", print: "Imprimer / PDF", company: "Nom de l’entreprise", local: "Version locale • Données enregistrées sur cet appareil", backup: "Exporter une sauvegarde", next: "Prochaines interventions", dark: "Changer le thème", payment: "Enregistrer un paiement", paymentAmount: "Montant du paiement (DH)", select: "Choisir un client", noClient: "Ajoutez un client avant de créer un devis ou une intervention.", completed: "Terminée", doing: "En cours", todo: "À faire", draft: "Brouillon", accepted: "Accepté", refused: "Refusé", edit: "Modifier", convert: "Créer l’intervention", saved: "Enregistré", invalid: "Vérifiez les montants : le paiement ne peut pas dépasser le total.", failed: "Sauvegarde impossible. Exportez vos données avant de quitter.", menu: "Menu", close: "Fermer", confirm: "Supprimer cet élément ?", remove: "Supprimer", activity: "Votre activité", overview: "Un regard sur votre activité", workspace: "ESPACE ARTISAN", first: "Commencer avec un client", details: "Détails du devis", note: "Devis sans TVA configurée. Vérifiez les informations avant envoi.", whatsapp: "Partager sur WhatsApp" }, ar: { dashboard: "نظرة عامة", clients: "الزبناء", quotes: "عروض الأثمنة", jobs: "التدخلات", payments: "الأداءات", settings: "الإعدادات", greeting: "خدمتك منظمة وبسيطة.", intro: "وقت أقل للإدارة ووقت أكثر لخدمتك.", add: "إضافة", newQuote: "عرض ثمن جديد", newJob: "تدخل جديد", newClient: "زبون جديد", revenue: "المبلغ المستخلص", pending: "باقي للاستخلاص", active: "التدخلات الجارية", save: "حفظ", cancel: "إلغاء", name: "الاسم الكامل", phone: "الهاتف", address: "العنوان", client: "الزبون", title: "الخدمة / الوصف", date: "التاريخ", amount: "المبلغ (درهم)", paid: "المبلغ المؤدى (درهم)", search: "بحث…", empty: "ما كاين حتى عنصر دابا", start: "زيد أول زبون ومن بعد وجد عرض ثمن أو تدخل.", today: "فضاء العمل ديالك", recent: "آخر التدخلات", status: "الحالة", total: "المجموع", rest: "الباقي", print: "طباعة / PDF", company: "اسم المقاولة", local: "نسخة محلية • المعطيات محفوظة فهاد الجهاز", backup: "تحميل نسخة احتياطية", next: "التدخلات المقبلة", dark: "تغيير المظهر", payment: "تسجيل أداء", paymentAmount: "مبلغ الأداء (درهم)", select: "اختار الزبون", noClient: "زيد زبون قبل إنشاء عرض ثمن أو تدخل.", completed: "سالاة", doing: "جارية", todo: "خاصها تدار", draft: "مسودة", accepted: "مقبول", refused: "مرفوض", edit: "تعديل", convert: "إنشاء تدخل", saved: "تحفظات", invalid: "تأكد من المبالغ: الأداء ما يفوتش المجموع.", failed: "تعذر الحفظ. حمل نسخة من المعطيات قبل الخروج.", menu: "القائمة", close: "إغلاق", confirm: "واش نحيدو هاد العنصر؟", remove: "حذف", activity: "النشاط ديالك", overview: "نظرة على النشاط ديالك", workspace: "فضاء الحرفي", first: "زيد أول زبون", details: "تفاصيل عرض الثمن", note: "عرض ثمن بلا إعداد الضريبة. تأكد من المعلومات قبل الإرسال.", whatsapp: "مشاركة عبر واتساب" } };
+type View = "dashboard" | "clients" | "quotes" | "jobs" | "payments" | "settings";
+const icons: Record<View, string> = { dashboard: "◫", clients: "♙", quotes: "▤", jobs: "◇", payments: "↗", settings: "⚙" };
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+ const [data,setData]=useState<Data>(initial), [ready,setReady]=useState(false), [lang,setLang]=useState<"fr"|"ar">("fr"), [dark,setDark]=useState(false), [view,setView]=useState<View>("dashboard"), [menu,setMenu]=useState(false), [query,setQuery]=useState(""), [modal,setModal]=useState<"client"|"quote"|"job"|"payment"|null>(null), [edit,setEdit]=useState<string|null>(null), [notice,setNotice]=useState(""), [printed,setPrinted]=useState<Job|null>(null);
+ const t=words[lang];
+ useEffect(()=>{try {const raw=localStorage.getItem("khedmti-v1"); if(raw){const d=JSON.parse(raw); if(Array.isArray(d.clients)&&Array.isArray(d.jobs))setData(d);}setLang(localStorage.getItem("khedmti-lang")==="ar"?"ar":"fr");setDark(localStorage.getItem("khedmti-dark")==="true");}catch{setNotice("Impossible de lire les données locales.");}setReady(true);},[]);
+ useEffect(()=>{if(ready){try{localStorage.setItem("khedmti-v1",JSON.stringify(data));localStorage.setItem("khedmti-lang",lang);localStorage.setItem("khedmti-dark",String(dark));}catch{setNotice(words[lang].failed);}}document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";},[data,lang,dark,ready]);
+ useEffect(()=>{if(printed){window.print();setPrinted(null);}},[printed]);
+ const money=(n:number)=>new Intl.NumberFormat(lang==="fr"?"fr-MA":"ar-MA",{style:"currency",currency:"MAD"}).format(n);
+ const client=(id:string)=>data.clients.find(c=>c.id===id);
+ const jobs=data.jobs.filter(j=>j.kind==="job"), quotes=data.jobs.filter(j=>j.kind==="quote");
+ const states:Record<string,string>={todo:t.todo,doing:t.doing,completed:t.completed,draft:t.draft,accepted:t.accepted,refused:t.refused};
+ function open(kind:typeof modal,id:string|null=null){if((kind==="job"||kind==="quote")&&!data.clients.length){setNotice(t.noClient);setView("clients");return;}setEdit(id);setModal(kind);setNotice("");}
+ function save(e:FormEvent<HTMLFormElement>){e.preventDefault();const f=new FormData(e.currentTarget),id=edit||crypto.randomUUID();if(modal==="client"){const c={id,name:String(f.get("name")).trim(),phone:String(f.get("phone")).trim(),address:String(f.get("address")).trim()};setData(d=>({...d,clients:edit?d.clients.map(x=>x.id===id?c:x):[...d.clients,c]}));}else if(modal==="payment"){const j=data.jobs.find(x=>x.id===edit);const n=Number(f.get("payment"));if(!j||!Number.isFinite(n)||n<=0||n>Math.round((j.amount-j.paid)*100)/100){setNotice(t.invalid);return;}setData(d=>({...d,jobs:d.jobs.map(x=>x.id===edit?{...x,paid:Math.round((x.paid+n)*100)/100}:x)}));}else {const amount=Number(f.get("amount")),paid=Number(f.get("paid"));if(!Number.isFinite(amount)||!Number.isFinite(paid)||amount<0||paid<0||paid>amount){setNotice(t.invalid);return;}const j:Job={id,client:String(f.get("client")),title:String(f.get("title")).trim(),date:String(f.get("date")),amount,paid,kind:modal==="quote"?"quote":"job",status:String(f.get("status"))};setData(d=>({...d,jobs:edit?d.jobs.map(x=>x.id===id?j:x):[j,...d.jobs]}));}setModal(null);setNotice(t.saved);}
+ function share(j:Job){const c=client(j.client);let phone=(c?.phone||"").replace(/[^0-9]/g,"");if(phone.startsWith("0")&&phone.length===10)phone="212"+phone.slice(1);const text=`${data.company}\n${t.details} #${j.id.slice(0,8).toUpperCase()}\n${c?.name}\n${j.title}\n${t.date}: ${j.date}\n${t.total}: ${money(j.amount)}\n${t.rest}: ${money(j.amount-j.paid)}`;window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`,"_blank","noopener,noreferrer");}
+ function remove(id:string){if(window.confirm(t.confirm))setData(d=>({...d,jobs:d.jobs.filter(j=>j.id!==id)}));}
+ function backup(){const a=document.createElement("a"),url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.href=url;a.download="khedmti-backup.json";a.click();URL.revokeObjectURL(url);}
+ const current=modal==="client"?data.clients.find(c=>c.id===edit):data.jobs.find(j=>j.id===edit);
+ const field=(label:string,name:string,type="text",value?:string|number,required=true)=><label>{label}<input name={name} type={type} defaultValue={value} required={required} min={type==="number"?0:undefined} step={type==="number"?"0.01":undefined}/></label>;
+ const filtered=(list:Job[])=>list.filter(j=>(j.title+client(j.client)?.name).toLowerCase().includes(query.toLowerCase()));
+ function table(list:Job[],payment=false){return list.length?<div className="table-scroll"><table><thead><tr><th>{t.title}</th><th>{t.client}</th><th>{t.date}</th><th>{t.status}</th><th>{payment?t.rest:t.total}</th><th/></tr></thead><tbody>{filtered(list).map(j=><tr key={j.id}><td><strong>{j.title}</strong><small>{j.id.slice(0,8).toUpperCase()}</small></td><td>{client(j.client)?.name}</td><td>{j.date}</td><td><span className={`badge ${j.status}`}>{states[j.status]}</span></td><td className="money">{money(payment?j.amount-j.paid:j.amount)}</td><td><div className="row-actions"><button onClick={()=>open(payment?"payment":j.kind,j.id)}>{payment?t.payment:t.edit}</button>{j.kind==="quote"&&<button onClick={()=>setPrinted(j)}>{t.print}</button>}{j.kind==="quote"&&<button onClick={()=>share(j)}>{t.whatsapp}</button>}{j.kind==="quote"&&j.status==="accepted"&&<button onClick={()=>setData(d=>({...d,jobs:d.jobs.map(x=>x.id===j.id?{...x,kind:"job",status:"todo"}:x)}))}>{t.convert}</button>}<button aria-label={t.remove} onClick={()=>remove(j.id)}>×</button></div></td></tr>)}</tbody></table>{filtered(list).length===0&&<p className="empty">{t.empty}</p>}</div>:<div className="empty"><span>◇</span><h3>{t.empty}</h3><p>{t.start}</p></div>;}
+ if(!ready)return <div className="loading">K<span>hedmti</span><p>…</p></div>;
+ return <div className={`app ${dark?"dark":""}`}>
+ <div className="screen" dir={lang==="ar"?"rtl":"ltr"}>
+ {menu&&<button className="scrim" aria-label={t.close} onClick={()=>setMenu(false)}/>}
+ <aside className={menu?"open":""}><a className="brand" href="/" aria-label="Khedmti"><span className="logo">k<span>·</span></span>Khedmti<span className="brand-dot">.</span></a><p className="eyebrow">{t.workspace}</p><nav>{(Object.keys(icons) as View[]).map(v=><button key={v} className={view===v?"selected":""} onClick={()=>{setView(v);setMenu(false);setQuery("");}}><span>{icons[v]}</span>{t[v]}{v==="jobs"&&jobs.length>0&&<b>{jobs.length}</b>}</button>)}</nav><div className="sidebar-bottom"><div className="local"><span className="live-dot"/>{t.local}</div><div className="profile"><span className="avatar">{data.company.slice(0,2).toUpperCase()}</span><div><strong>{data.company}</strong><small>{t.activity}</small></div></div></div></aside>
+ <div className="main"><header><div className="header-left"><button className="menu-button" aria-label={t.menu} onClick={()=>setMenu(!menu)}>☰</button><span>Khedmti <span className="slash">/</span> <strong>{t[view]}</strong></span></div><div className="header-actions"><button onClick={()=>setLang(lang==="fr"?"ar":"fr")}>{lang==="fr"?"العربية":"Français"}</button><button aria-label={t.dark} onClick={()=>setDark(!dark)}>{dark?"☀":"☾"}</button><span className="avatar small">{data.company.slice(0,1)}</span></div></header>
+ <main><div className="page-title"><div><p className="eyebrow">{view==="dashboard"?t.today:t.activity}</p><h1>{view==="dashboard"?t.greeting:t[view]}</h1><p>{view==="dashboard"?t.intro:t.overview}</p></div>{view!=="settings"&&view!=="payments"&&<button className="primary" onClick={()=>open(view==="clients"?"client":view==="quotes"?"quote":"job")}>＋ {view==="clients"?t.newClient:view==="quotes"?t.newQuote:t.newJob}</button>}</div>
+ {notice&&<div className="notice" role="status">{notice}<button aria-label={t.close} onClick={()=>setNotice("")}>×</button></div>}
+ {view==="dashboard"&&<><div className="stats">{[[t.revenue,money(jobs.reduce((a,j)=>a+j.paid,0)),"↗"],[t.pending,money(jobs.reduce((a,j)=>a+j.amount-j.paid,0)),"◷"],[t.active,jobs.filter(j=>j.status!=="completed").length,"◇"],[t.clients,data.clients.length,"♙"]].map(([label,value,icon])=><article className="stat" key={label}><div><span>{label}</span><i>{icon}</i></div><strong>{value}</strong><small>Khedmti · {t.activity}</small></article>)}</div><div className="dashboard-grid"><section className="panel"><div className="panel-heading"><h2>{t.recent}</h2><button onClick={()=>setView("jobs")}>{t.jobs} ↗</button></div>{table(jobs.slice(0,5))}</section><section className="panel upcoming"><div className="panel-heading"><h2>{t.next}</h2><span>◷</span></div>{jobs.filter(j=>j.status!=="completed").sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4).map(j=><div className="appointment" key={j.id}><span className="date-tile">{j.date.slice(8)}<small>{j.date.slice(5,7)}</small></span><div><strong>{j.title}</strong><small>{client(j.client)?.name}</small></div></div>)}{!jobs.some(j=>j.status!=="completed")&&<div className="empty compact">{t.empty}</div>}<button className="wide" onClick={()=>open("job")}>＋ {t.newJob}</button></section></div><section className="welcome"><div className="welcome-icon">k.</div><div><h2>{t.overview}</h2><p>{t.start}</p></div><button onClick={()=>open("client")}>{t.newClient} ↗</button></section></>}
+ {view==="clients"&&<><input className="search" aria-label={t.search} placeholder={t.search} value={query} onChange={e=>setQuery(e.target.value)}/><div className="client-grid">{data.clients.filter(c=>(c.name+c.phone+c.address).toLowerCase().includes(query.toLowerCase())).map(c=><article className="panel client-card" key={c.id}><span className="avatar">{c.name.slice(0,2).toUpperCase()}</span><h2>{c.name}</h2><p dir="ltr">{c.phone}</p><p>{c.address||"—"}</p><button onClick={()=>open("client",c.id)}>{t.edit} ↗</button></article>)}</div>{!data.clients.length&&<section className="panel empty"><h3>{t.empty}</h3><p>{t.start}</p><button className="primary" onClick={()=>open("client")}>{t.first}</button></section>}</>}
+ {(view==="quotes"||view==="jobs"||view==="payments")&&<section className="panel"><div className="panel-heading"><h2>{t[view]}</h2><input className="search" aria-label={t.search} placeholder={t.search} value={query} onChange={e=>setQuery(e.target.value)}/></div>{table(view==="quotes"?quotes:view==="payments"?jobs.filter(j=>j.amount>j.paid):jobs,view==="payments")}</section>}
+ {view==="settings"&&<section className="panel settings"><h2>{t.company}</h2><form onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);setData(d=>({...d,company:String(f.get("company")).trim(),phone:String(f.get("phone"))}));setNotice(t.saved);}}>{field(t.company,"company","text",data.company)}{field(t.phone,"phone","tel",data.phone,false)}<button className="primary">{t.save}</button></form><hr/><p>{t.local}</p><button onClick={backup}>{t.backup} ↓</button></section>}
+ </main><footer>Khedmti <span>© {new Date().getFullYear()} · {t.local}</span></footer></div>
+ {modal&&<div className="modal-backdrop" onClick={e=>{if(e.target===e.currentTarget)setModal(null);}}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div className="panel-heading"><h2 id="modal-title">{modal==="client"?t.newClient:modal==="quote"?t.newQuote:modal==="payment"?t.payment:t.newJob}</h2><button aria-label={t.close} onClick={()=>setModal(null)}>×</button></div><form onSubmit={save}>{modal==="client"?<>{field(t.name,"name","text",current&&"name"in current?current.name:"")}{field(t.phone,"phone","tel",current&&"phone"in current?current.phone:"")}{field(t.address,"address","text",current&&"address"in current?current.address:"",false)}</>:modal==="payment"?<>{current&&"amount"in current&&<p>{t.rest}: <strong>{money(current.amount-current.paid)}</strong></p>}{field(t.paymentAmount,"payment","number")}</>:<><label>{t.client}<select name="client" required defaultValue={current&&"client"in current?current.client:""}><option value="" disabled>{t.select}</option>{data.clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>{field(t.title,"title","text",current&&"title"in current?current.title:"")}{field(t.date,"date","date",current&&"date"in current?current.date:new Date().toISOString().slice(0,10))}<div className="form-row">{field(t.amount,"amount","number",current&&"amount"in current?current.amount:undefined)}{field(t.paid,"paid","number",current&&"paid"in current?current.paid:0)}</div><label>{t.status}<select name="status" defaultValue={current&&"status"in current?current.status:modal==="quote"?"draft":"todo"}>{(modal==="quote"?["draft","accepted","refused"]:["todo","doing","completed"]).map(s=><option key={s} value={s}>{states[s]}</option>)}</select></label></>}{notice&&<p role="alert">{notice}</p>}<div className="form-actions"><button type="button" onClick={()=>setModal(null)}>{t.cancel}</button><button className="primary">{t.save}</button></div></form></section></div>}
+ </div>
+ {printed&&<article className="print-document"><h1>{data.company}</h1><p>{data.phone}</p><hr/><h2>{t.details} #{printed.id.slice(0,8).toUpperCase()}</h2><p>{t.date}: {printed.date}</p><h3>{client(printed.client)?.name}</h3><p>{client(printed.client)?.address} · {client(printed.client)?.phone}</p><table><thead><tr><th>{t.title}</th><th>{t.total}</th></tr></thead><tbody><tr><td>{printed.title}</td><td>{money(printed.amount)}</td></tr></tbody></table><p>{t.paid}: {money(printed.paid)}</p><h3>{t.rest}: {money(printed.amount-printed.paid)}</h3><p>{t.note}</p></article>}
+ </div>;
 }
