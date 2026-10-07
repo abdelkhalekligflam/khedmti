@@ -129,22 +129,11 @@ aside {
   padding: 0 10px;
 }
 .logo {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   flex: none;
-  background: #344b2c;
-  color: #f8fae8;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 31px;
-  letter-spacing: -3px;
-  padding-inline-end: 4px;
-  box-shadow: 0 2px 3px #0000000b;
-}
-.logo span {
-  color: #cee587;
+  display: block;
+  border-radius: 11px;
 }
 .brand-dot {
   color: var(--accent, #bdd07b);
@@ -2008,7 +1997,8 @@ footer > span:last-child {
   letter-spacing: -1px;
 }
 .auth-brand .logo {
-  background: #476238;
+  width: 44px;
+  height: 44px;
 }
 .auth-tag {
   font-size: 11px;

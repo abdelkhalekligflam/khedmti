@@ -1,4 +1,5 @@
 "use client";
+import BrandMark from "@/components/brand-mark";
 import {
   useEffect,
   useRef,
@@ -959,9 +960,7 @@ function Workspace({ user, guest }: { user: User | null; guest: boolean }) {
         )}
         <aside className={menu ? "open" : ""}>
           <a className="brand" href="/">
-            <span className="logo">
-              k<span>·</span>
-            </span>
+            <BrandMark />
             Khedmti<span className="brand-dot">.</span>
           </a>
           <div className="workspace-switch">

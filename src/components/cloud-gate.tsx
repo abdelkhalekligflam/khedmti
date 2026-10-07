@@ -1,4 +1,5 @@
 "use client";
+import BrandMark from "@/components/brand-mark";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -122,9 +123,7 @@ export default function CloudGate({
     <div className="auth-page" dir={ar ? "rtl" : "ltr"}>
       <div className="auth-story">
         <a className="auth-brand" href="/">
-          <span className="logo">
-            k<span>·</span>
-          </span>
+          <BrandMark />
           Khedmti.
         </a>
         <div>
