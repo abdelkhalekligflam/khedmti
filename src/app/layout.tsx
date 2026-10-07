@@ -3,7 +3,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Khedmti — Votre activité, organisée",
   description: "Clients, devis et interventions pour les artisans.",
-  icons: { icon: "/khedmti-icon.svg?v=2", apple: "/khedmti-icon.svg?v=2" },
+  icons: { icon: "/khedmti-toolbox.svg", apple: "/khedmti-toolbox.svg" },
 };
 export default function RootLayout({
   children,

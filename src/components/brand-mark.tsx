@@ -4,7 +4,7 @@ export default function BrandMark() {
   return (
     <Image
       className="logo"
-      src="/khedmti-icon.svg?v=2"
+      src="/khedmti-toolbox.svg"
       alt=""
       width={40}
       height={40}
